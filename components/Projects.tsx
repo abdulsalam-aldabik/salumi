@@ -10,7 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Github, Star, ExternalLink, Search, Users, Clock, TrendingUp, Target, Award } from "lucide-react";
+import { Github, Star, ExternalLink, Search, Users, Clock, TrendingUp, Target, Award, Image as ImageIcon, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo } from "react";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
@@ -247,6 +247,20 @@ function ProjectCard({ project, index, activeTab, setActiveTab }: ProjectCardPro
     triggerOnce: true,
   });
 
+  const [showGallery, setShowGallery] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const projectPhotos = project.photos || [];
+  const hasPhotos = projectPhotos.length > 0;
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % projectPhotos.length);
+  };
+
+  const previousImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + projectPhotos.length) % projectPhotos.length);
+  };
+
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -262,6 +276,86 @@ function ProjectCard({ project, index, activeTab, setActiveTab }: ProjectCardPro
 
   return (
     <motion.div ref={ref} variants={cardVariants} className="w-full">
+      {/* Photo Gallery Modal */}
+      <AnimatePresence>
+        {showGallery && hasPhotos && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            onClick={() => setShowGallery(false)}
+          >
+            <button
+              onClick={() => setShowGallery(false)}
+              className="absolute right-4 top-4 z-50 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+              {/* Main Image */}
+              <motion.img
+                key={currentImageIndex}
+                src={projectPhotos[currentImageIndex]}
+                alt={`${project.title} - Photo ${currentImageIndex + 1}`}
+                className="max-h-[80vh] w-auto rounded-lg object-contain shadow-2xl"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+              />
+
+              {/* Navigation Arrows */}
+              {projectPhotos.length > 1 && (
+                <>
+                  <button
+                    onClick={previousImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </button>
+                </>
+              )}
+
+              {/* Image Counter */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-2 text-sm text-white backdrop-blur-sm">
+                {currentImageIndex + 1} / {projectPhotos.length}
+              </div>
+
+              {/* Thumbnail Strip */}
+              {projectPhotos.length > 1 && (
+                <div className="mt-4 flex justify-center gap-2 overflow-x-auto pb-2">
+                  {projectPhotos.map((photo: string, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
+                        idx === currentImageIndex
+                          ? "border-[#D5B977] scale-110"
+                          : "border-transparent opacity-50 hover:opacity-100"
+                      }`}
+                    >
+                      <img
+                        src={photo}
+                        alt={`Thumbnail ${idx + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Card className="group relative h-full overflow-hidden border-2 border-transparent bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:border-[#D5B977] hover:shadow-2xl hover:shadow-[#D5B977]/20">
         {/* Gradient border effect */}
         <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#D5B977] via-[#c2a562] to-[#b39559] opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ padding: '2px' }}>
@@ -271,6 +365,15 @@ function ProjectCard({ project, index, activeTab, setActiveTab }: ProjectCardPro
         <div className="relative z-10 max-w-full overflow-hidden">
           {/* Project Header Image */}
           <div className="relative h-40 w-full overflow-hidden bg-gradient-to-br from-[#1a1a3e] via-[#2d2d5a] to-[#1a1a3e]">
+            {/* Project Image */}
+            {project.image && (
+              <img
+                src={project.image}
+                alt={project.title}
+                className="absolute inset-0 h-full w-full object-cover opacity-40 transition-all duration-500 group-hover:scale-110 group-hover:opacity-60"
+              />
+            )}
+            
             {/* Badges */}
             <div className="absolute left-4 top-4 z-20 flex gap-2">
               {project.featured && (
@@ -470,7 +573,7 @@ function ProjectCard({ project, index, activeTab, setActiveTab }: ProjectCardPro
                     </AnimatePresence>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-3 border-t border-gray-200 pt-4">
+                    <div className="flex flex-wrap gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
                       {project.github && (
                         <motion.a
                           href={project.github}
@@ -484,15 +587,38 @@ function ProjectCard({ project, index, activeTab, setActiveTab }: ProjectCardPro
                           View Code
                         </motion.a>
                       )}
-                      <motion.a
-                        href="#"
-                        className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-[#D5B977] px-4 py-2 text-sm font-semibold text-[#D5B977] transition-all duration-300 hover:bg-[#D5B977] hover:text-white hover:shadow-lg"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Live Demo
-                      </motion.a>
+                      {project.demo ? (
+                        <motion.a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-[#D5B977] px-4 py-2 text-sm font-semibold text-[#D5B977] transition-all duration-300 hover:bg-[#D5B977] hover:text-white hover:shadow-lg"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          Live Demo
+                        </motion.a>
+                      ) : (
+                        <motion.button
+                          disabled
+                          className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-semibold text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          No Demo
+                        </motion.button>
+                      )}
+                      {hasPhotos && (
+                        <motion.button
+                          onClick={() => setShowGallery(true)}
+                          className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#D5B977] to-[#c2a562] px-4 py-2 text-sm font-semibold text-[#1a1a3e] transition-all duration-300 hover:shadow-lg"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <ImageIcon className="h-4 w-4" />
+                          Photos ({projectPhotos.length})
+                        </motion.button>
+                      )}
                     </div>
                   </div>
                 </AccordionContent>

@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Toast, ToastType } from "@/components/ui/toast";
 import { Mail, Github, Linkedin, MapPin, Send, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useForm, ValidationError } from "@formspree/react";
 
 interface FormErrors {
   name?: string;
@@ -15,6 +16,7 @@ interface FormErrors {
 }
 
 export function Contact() {
+  const [state, handleFormspreeSubmit] = useForm("xwpwrdpn");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,7 +24,6 @@ export function Contact() {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
     type: ToastType;
@@ -32,6 +33,30 @@ export function Contact() {
     type: "success",
     isVisible: false,
   });
+
+  // Show success toast when form is submitted successfully
+  useEffect(() => {
+    if (state.succeeded) {
+      setToast({
+        message: "Thank you! Your message has been sent successfully. I'll get back to you soon!",
+        type: "success",
+        isVisible: true,
+      });
+      setFormData({ name: "", email: "", message: "" });
+      setErrors({});
+    }
+  }, [state.succeeded]);
+
+  // Show error toast if submission fails
+  useEffect(() => {
+    if (state.errors && Object.keys(state.errors).length > 0) {
+      setToast({
+        message: "Oops! Something went wrong. Please try again or email me directly.",
+        type: "error",
+        isVisible: true,
+      });
+    }
+  }, [state.errors]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -58,7 +83,7 @@ export function Contact() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -70,44 +95,8 @@ export function Contact() {
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
-      // Send to Formspree
-      const response = await fetch("https://formspree.io/f/xwpwrdpn", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-          _subject: `New Portfolio Contact from ${formData.name}`,
-        }),
-      });
-
-      if (response.ok) {
-        setToast({
-          message: "Thank you! Your message has been sent successfully. I'll get back to you soon!",
-          type: "success",
-          isVisible: true,
-        });
-        setFormData({ name: "", email: "", message: "" });
-        setErrors({});
-      } else {
-        throw new Error("Failed to send message");
-      }
-    } catch (error) {
-      setToast({
-        message: "Oops! Something went wrong. Please try again or email me directly.",
-        type: "error",
-        isVisible: true,
-      });
-      console.error("Form submission error:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Call Formspree's handleSubmit
+    handleFormspreeSubmit(e);
   };
 
   const handleChange = (
@@ -354,10 +343,10 @@ export function Contact() {
 
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={state.submitting}
                   className="w-full bg-[#1a1a3e] py-6 text-lg font-semibold text-white transition-all duration-300 hover:bg-[#D5B977] hover:text-[#1a1a3e] disabled:opacity-50"
                 >
-                  {isSubmitting ? (
+                  {state.submitting ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                       Sending...

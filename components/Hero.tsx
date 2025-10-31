@@ -27,8 +27,8 @@ export function Hero() {
 
   useEffect(() => {
     setMounted(true);
-    // Generate random particles for background animation
-    const newParticles = Array.from({ length: 40 }, () => ({
+    // Reduce particles from 40 to 15 for better performance
+    const newParticles = Array.from({ length: 15 }, () => ({
       x: Math.random() * 100,
       y: Math.random() * 100,
       size: Math.random() * 6 + 2,
@@ -38,19 +38,30 @@ export function Hero() {
     setParticles(newParticles);
   }, []);
 
-  // Mouse move handler for parallax effects
+  // Mouse move handler for parallax effects with throttling
   useEffect(() => {
+    let rafId: number;
     const handleMouseMove = (e: MouseEvent) => {
       if (!heroRef.current) return;
-      const rect = heroRef.current.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
-      const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
-      mouseX.set(x * 20);
-      mouseY.set(y * 20);
+      
+      // Cancel previous animation frame
+      if (rafId) cancelAnimationFrame(rafId);
+      
+      // Use requestAnimationFrame for smooth performance
+      rafId = requestAnimationFrame(() => {
+        const rect = heroRef.current!.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+        const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+        mouseX.set(x * 20);
+        mouseY.set(y * 20);
+      });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [mouseX, mouseY]);
 
   return (
@@ -73,28 +84,14 @@ export function Hero() {
         style={{ backgroundSize: "200% 200%" }}
       />
 
-      {/* Animated grid pattern overlay */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="h-full w-full" style={{
-          backgroundImage: `
-            linear-gradient(to right, #D5B977 1px, transparent 1px),
-            linear-gradient(to bottom, #D5B977 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-        }}>
-          <motion.div
-            className="h-full w-full"
-            animate={{
-              opacity: [0.1, 0.3, 0.1],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        </div>
-      </div>
+      {/* Animated grid pattern overlay - simplified for performance */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: `
+          linear-gradient(to right, #D5B977 1px, transparent 1px),
+          linear-gradient(to bottom, #D5B977 1px, transparent 1px)
+        `,
+        backgroundSize: "50px 50px",
+      }} />
 
       {/* Noise texture overlay */}
       <div 
@@ -130,10 +127,9 @@ export function Hero() {
         />
       ))}
 
-      {/* Animated SVG shapes */}
+      {/* Animated SVG shapes - reduced for performance */}
       <motion.div
         className="absolute left-10 top-20 opacity-20"
-        style={{ x: mouseXSpring, y: mouseYSpring }}
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
       >
@@ -142,46 +138,9 @@ export function Hero() {
         </svg>
       </motion.div>
 
-      <motion.div
-        className="absolute bottom-20 right-10 opacity-20"
-        style={{ x: mouseXSpring, y: mouseYSpring }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-      >
-        <svg width="120" height="120" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="#D5B977" strokeWidth="2" />
-          <circle cx="50" cy="50" r="25" fill="none" stroke="#D5B977" strokeWidth="2" />
-        </svg>
-      </motion.div>
-
-      {/* Animated background gradient circles with parallax */}
-      <motion.div
-        style={{ y: y1, x: mouseXSpring }}
-        className="absolute right-20 top-20 h-96 w-96 rounded-full bg-[#D5B977] opacity-10 blur-3xl"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.1, 0.2, 0.1],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-      <motion.div
-        style={{ y: y2, x: mouseYSpring }}
-        className="absolute bottom-20 left-20 h-96 w-96 rounded-full bg-[#D5B977] opacity-10 blur-3xl"
-        animate={{
-          scale: [1.2, 1, 1.2],
-          opacity: [0.2, 0.1, 0.2],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
-      />
+      {/* Animated background gradient circles - simplified */}
+      <div className="absolute right-20 top-20 h-96 w-96 rounded-full bg-[#D5B977] opacity-10 blur-3xl animate-pulse-glow" />
+      <div className="absolute bottom-20 left-20 h-96 w-96 rounded-full bg-[#D5B977] opacity-10 blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
 
       {/* Glassmorphism content container */}
       <motion.div 

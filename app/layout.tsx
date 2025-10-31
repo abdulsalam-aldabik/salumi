@@ -33,14 +33,14 @@ export const metadata: Metadata = {
   authors: [{ name: "Abdul Salam Aldabik", url: "https://github.com/abdulsalam-aldabik" }],
   creator: "Abdul Salam Aldabik",
   publisher: "Abdul Salam Aldabik",
-  metadataBase: new URL("https://yourportfolio.com"),
+  metadataBase: new URL("https://salumieportfolio.netlify.app"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://yourportfolio.com",
+    url: "https://salumieportfolio.netlify.app",
     title: "Abdul Salam Aldabik - AI Engineer & Developer Portfolio",
     description: "Explore AI/ML projects, web development work, and technical skills. Specializing in Computer Vision, Deep Learning, and Full-Stack Development.",
     siteName: "Abdul Salam Aldabik Portfolio",

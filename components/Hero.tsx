@@ -234,7 +234,7 @@ export function Hero() {
                   }}
                   whileHover={{
                     scale: 1.05,
-                    textShadow: "0 0 20px rgba(0, 212, 255, 0.8)",
+                    textShadow: "0 0 20px rgba(213, 185, 119, 0.8)",
                     transition: { duration: 0.2 },
                   }}
                   style={{

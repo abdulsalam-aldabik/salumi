@@ -66,17 +66,14 @@ export function Navigation() {
   // Toggle theme
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
-    console.log("Toggling theme from", theme, "to", newTheme);
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
     
-    // Force remove/add dark class
+    // Apply theme immediately
     if (newTheme === "dark") {
       document.documentElement.classList.add("dark");
-      console.log("Added dark class, current classes:", document.documentElement.className);
     } else {
       document.documentElement.classList.remove("dark");
-      console.log("Removed dark class, current classes:", document.documentElement.className);
     }
   };
 

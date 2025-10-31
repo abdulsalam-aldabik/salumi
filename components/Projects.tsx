@@ -270,7 +270,7 @@ function ProjectCard({ project, index, activeTab, setActiveTab }: ProjectCardPro
 
         <div className="relative z-10 max-w-full overflow-hidden">
           {/* Project Header Image */}
-          <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-[#1a1a3e] via-[#2d2d5a] to-[#1a1a3e]">
+          <div className="relative h-40 w-full overflow-hidden bg-gradient-to-br from-[#1a1a3e] via-[#2d2d5a] to-[#1a1a3e]">
             {/* Badges */}
             <div className="absolute left-4 top-4 z-20 flex gap-2">
               {project.featured && (
@@ -295,9 +295,9 @@ function ProjectCard({ project, index, activeTab, setActiveTab }: ProjectCardPro
 
             {/* Title with gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a3e] via-transparent to-transparent" />
-            <div className="absolute inset-0 flex items-center justify-center p-6">
+            <div className="absolute inset-0 flex items-center justify-center p-4">
               <motion.h3
-                className="text-center text-2xl font-bold text-white drop-shadow-2xl"
+                className="text-center text-xl font-bold text-white drop-shadow-2xl line-clamp-2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.3 }}
@@ -310,13 +310,13 @@ function ProjectCard({ project, index, activeTab, setActiveTab }: ProjectCardPro
             <div className="absolute inset-0 bg-gradient-to-t from-[#D5B977]/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           </div>
 
-          <CardHeader className="space-y-3">
-            <CardDescription className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
+          <CardHeader className="space-y-2 py-4">
+            <CardDescription className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
               {project.shortDescription}
             </CardDescription>
 
             {/* Project Meta Info */}
-            <div className="flex flex-wrap gap-3 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex flex-wrap gap-2 text-xs text-gray-600 dark:text-gray-400">
               <div className="flex items-center gap-1">
                 <Clock className="h-4 w-4 text-[#D5B977]" />
                 <span>{project.duration}</span>

@@ -72,17 +72,42 @@ export function Contact() {
 
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Send to Formspree
+      const response = await fetch("https://formspree.io/f/xovqazrp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          _subject: `New Portfolio Contact from ${formData.name}`,
+        }),
+      });
+
+      if (response.ok) {
+        setToast({
+          message: "Thank you! Your message has been sent successfully. I'll get back to you soon!",
+          type: "success",
+          isVisible: true,
+        });
+        setFormData({ name: "", email: "", message: "" });
+        setErrors({});
+      } else {
+        throw new Error("Failed to send message");
+      }
+    } catch (error) {
       setToast({
-        message: "Thank you! Your message has been sent successfully. I'll get back to you soon!",
-        type: "success",
+        message: "Oops! Something went wrong. Please try again or email me directly.",
+        type: "error",
         isVisible: true,
       });
-      setFormData({ name: "", email: "", message: "" });
-      setErrors({});
+      console.error("Form submission error:", error);
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   const handleChange = (

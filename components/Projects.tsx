@@ -2,661 +2,470 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { projects } from "@/lib/data";
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Github, Star, ExternalLink, Search, Users, Clock, TrendingUp, Target, Award, Image as ImageIcon, X, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Github,
+  Star,
+  ExternalLink,
+  Search,
+  Users,
+  Clock,
+  Target,
+  Award,
+  Image as ImageIcon,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpRight,
+  Sparkles,
+} from "lucide-react";
 import { useState, useMemo } from "react";
 import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
 
 const categories = ["All", "AI/ML", "Full Stack", "IoT", "DevOps", "Data Science"] as const;
 
+const reveal = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
+};
+
 export function Projects() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<{ [key: number]: string }>({});
   const [showAll, setShowAll] = useState(false);
 
-  // Fixed filtering logic
   const filteredProjects = useMemo(() => {
     let filtered = projects;
-
-    // Filter by category
     if (selectedCategory !== "All") {
-      filtered = filtered.filter((project) => project.category === selectedCategory);
+      filtered = filtered.filter((p) => p.category === selectedCategory);
     }
-
-    // Filter by search query
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      const q = searchQuery.toLowerCase();
       filtered = filtered.filter(
-        (project) =>
-          project.title.toLowerCase().includes(query) ||
-          project.shortDescription.toLowerCase().includes(query) ||
-          project.fullDescription.toLowerCase().includes(query) ||
-          project.techStack.some((tech) => tech.toLowerCase().includes(query))
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.shortDescription.toLowerCase().includes(q) ||
+          p.fullDescription.toLowerCase().includes(q) ||
+          p.techStack.some((t) => t.toLowerCase().includes(q))
       );
     }
-
     return filtered;
   }, [selectedCategory, searchQuery]);
 
-  // Display only top 3 latest projects unless "Show More" is clicked
   const displayedProjects = useMemo(() => {
     if (showAll || searchQuery.trim() || selectedCategory !== "All") {
       return filteredProjects;
     }
-    return filteredProjects.slice(0, 3);
+    return filteredProjects.slice(0, 4);
   }, [filteredProjects, showAll, searchQuery, selectedCategory]);
 
-  const fadeInUp = {
-    initial: { opacity: 0, y: 40 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, margin: "-100px" },
-    transition: { duration: 0.8 },
-  };
+  const isCurated =
+    !showAll && selectedCategory === "All" && !searchQuery.trim();
 
   return (
-    <section id="projects" className="relative bg-gray-50 dark:bg-gray-800 py-20 md:py-32 transition-colors duration-300">
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#D5B977]/5 to-transparent" />
-
-      <div className="container relative z-10 mx-auto px-4">
-        <motion.div {...fadeInUp}>
-          <h2 className="mb-4 text-center text-4xl font-bold text-[#1a1a3e] dark:text-white md:text-5xl">
-            Featured Projects
+    <section id="projects" className="section bg-surface">
+      <div className="shell">
+        <motion.div {...reveal} className="mb-12">
+          <p className="eyebrow mb-4">02 — Selected Work</p>
+          <h2 className="display max-w-3xl text-[clamp(2rem,5vw,3.5rem)] text-ink">
+            Things I&apos;ve designed, trained &amp;{" "}
+            <span className="italic text-gold">deployed</span>.
           </h2>
-          <p className="mb-8 text-center text-lg text-gray-600 dark:text-gray-400">
-            A showcase of my AI/ML and full-stack development work
-          </p>
-
-          {/* Search Bar */}
-          <div className="mx-auto mb-8 max-w-2xl">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search projects by title, tech stack, or description..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-100 py-3 pl-12 pr-4 transition-all duration-300 focus:border-[#D5B977] focus:outline-none focus:ring-2 focus:ring-[#D5B977]/20"
-              />
-            </div>
-          </div>
-
-          {/* Category Filter */}
-          <div className="mb-8 flex flex-wrap justify-center gap-3">
-            {categories.map((category) => (
-              <motion.button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`rounded-full px-6 py-2 font-semibold transition-all duration-300 ${
-                  selectedCategory === category
-                    ? "bg-[#D5B977] text-[#1a1a3e] shadow-lg shadow-[#D5B977]/30"
-                    : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                }`}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label={`Filter by ${category}`}
-              >
-                {category}
-              </motion.button>
-            ))}
-          </div>
-
-          {/* Results Count */}
-          <motion.p
-            className="mb-8 text-center text-sm text-gray-600 dark:text-gray-400"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            key={`${selectedCategory}-${searchQuery}-${filteredProjects.length}`}
-          >
-            Showing <span className="font-semibold text-[#D5B977]">{displayedProjects.length}</span> of{" "}
-            <span className="font-semibold">{projects.length}</span> projects
-          </motion.p>
         </motion.div>
 
-        {/* Projects Grid */}
+        {/* Featured internship case study */}
+        <motion.a
+          href="/internship"
+          {...reveal}
+          className="card card-hover group mb-10 grid gap-6 overflow-hidden p-6 md:grid-cols-[auto_1fr_auto] md:items-center md:p-8"
+        >
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold-solid text-ongold">
+            <Sparkles className="h-7 w-7" />
+          </span>
+          <div>
+            <span className="chip mb-2 w-fit !border-gold/40 !bg-gold-solid/15 text-gold">
+              Internship · Smart NV
+            </span>
+            <h3 className="font-display text-2xl text-ink md:text-3xl">
+IQ Noodles: teaching a phone to solve a puzzle
+            </h3>
+            <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted">
+              A camera app that detects a real puzzle&apos;s pieces and works out
+              how to finish it. Built and trained during my 2026 internship.
+              Read the full case study.
+            </p>
+          </div>
+          <span className="inline-flex items-center gap-2 self-start font-medium text-gold md:self-center">
+            Read case study
+            <ArrowUpRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </span>
+        </motion.a>
+
+        {/* Controls */}
+        <motion.div {...reveal} className="mb-10 space-y-5">
+          <div className="relative max-w-md">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+            <input
+              type="text"
+              placeholder="Search by name, tech, or keyword…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-full border border-line bg-base py-3 pl-11 pr-4 text-sm text-ink placeholder:text-muted transition-colors focus:border-gold focus:outline-none"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-all ${
+                  selectedCategory === category
+                    ? "border-gold bg-gold-solid/15 text-gold"
+                    : "border-line text-muted hover:border-gold/50 hover:text-ink"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Grid */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`${selectedCategory}-${searchQuery}-${showAll}`}
-            className="grid gap-6 md:gap-8 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
+            className="grid gap-6 md:grid-cols-2"
             initial="hidden"
             animate="visible"
-            exit="exit"
             variants={{
               hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.1,
-                },
-              },
-              exit: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
             }}
           >
             {displayedProjects.map((project, index) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                index={index}
-                activeTab={activeTab[project.id] || "overview"}
-                setActiveTab={(tab) => setActiveTab({ ...activeTab, [project.id]: tab })}
-              />
+              <ProjectCard key={project.id} project={project} index={index} />
             ))}
           </motion.div>
         </AnimatePresence>
 
-        {/* Show More Button */}
-        {!showAll && filteredProjects.length > 3 && selectedCategory === "All" && !searchQuery.trim() && (
-          <motion.div
-            className="mt-12 flex justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <motion.button
-              onClick={() => setShowAll(true)}
-              className="group relative overflow-hidden rounded-full bg-gradient-to-r from-[#D5B977] to-[#c2a562] px-8 py-4 font-semibold text-[#1a1a3e] shadow-lg transition-all duration-300 hover:shadow-2xl hover:shadow-[#D5B977]/40"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                Show More Projects
-                <motion.span
-                  animate={{ y: [0, 3, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  ↓
-                </motion.span>
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#c2a562] to-[#D5B977] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            </motion.button>
-          </motion.div>
+        {/* Show more / less */}
+        {isCurated && filteredProjects.length > 4 && (
+          <div className="mt-12 flex justify-center">
+            <button onClick={() => setShowAll(true)} className="btn btn-outline">
+              Show all {projects.length} projects
+            </button>
+          </div>
         )}
-
-        {/* Show Less Button */}
         {showAll && selectedCategory === "All" && !searchQuery.trim() && (
-          <motion.div
-            className="mt-12 flex justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.button
+          <div className="mt-12 flex justify-center">
+            <button
               onClick={() => {
                 setShowAll(false);
-                // Scroll back to projects section
-                document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document
+                  .getElementById("projects")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="group relative overflow-hidden rounded-full border-2 border-[#D5B977] bg-transparent px-8 py-4 font-semibold text-[#D5B977] shadow-lg transition-all duration-300 hover:bg-[#D5B977] hover:text-[#1a1a3e] hover:shadow-2xl hover:shadow-[#D5B977]/40"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
+              className="btn btn-outline"
             >
-              <span className="relative z-10 flex items-center gap-2">
-                Show Less
-                <motion.span
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  ↑
-                </motion.span>
-              </span>
-            </motion.button>
-          </motion.div>
+              Show less
+            </button>
+          </div>
         )}
 
-        {/* No Results */}
         {displayedProjects.length === 0 && (
-          <motion.div
-            className="py-20 text-center"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-              <Search className="h-10 w-10 text-gray-400" />
+          <div className="py-20 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-line">
+              <Search className="h-7 w-7 text-muted" />
             </div>
-            <h3 className="mb-2 text-2xl font-bold text-gray-700 dark:text-gray-300">No projects found</h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Try adjusting your search or filter criteria
-            </p>
-          </motion.div>
+            <h3 className="mb-1 font-display text-2xl text-ink">No projects found</h3>
+            <p className="text-muted">Try a different search or category.</p>
+          </div>
         )}
       </div>
     </section>
   );
 }
 
-interface ProjectCardProps {
-  project: any;
-  index: number;
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function ProjectCard({ project, index }: { project: any; index: number }) {
+  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true });
+  const [activeTab, setActiveTab] = useState("overview");
+  const [showGallery, setShowGallery] = useState(false);
+  const [imgIndex, setImgIndex] = useState(0);
 
-function ProjectCard({ project, index, activeTab, setActiveTab }: ProjectCardProps) {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
+  const photos: string[] = project.photos || [];
+  const hasPhotos = photos.length > 0;
+  const tabs = ["overview", "metrics", "challenges", "outcomes"].filter((t) => {
+    if (t === "metrics") return project.metrics;
+    if (t === "challenges") return project.challenges;
+    if (t === "outcomes") return project.outcomes;
+    return true;
   });
 
-  const [showGallery, setShowGallery] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const projectPhotos = project.photos || [];
-  const hasPhotos = projectPhotos.length > 0;
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % projectPhotos.length);
-  };
-
-  const previousImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + projectPhotos.length) % projectPhotos.length);
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        delay: index * 0.1,
-      },
-    },
-    exit: { opacity: 0, y: -50, transition: { duration: 0.3 } },
-  };
-
   return (
-    <motion.div ref={ref} variants={cardVariants} className="w-full">
-      {/* Photo Gallery Modal */}
+    <motion.div
+      ref={ref}
+      variants={{
+        hidden: { opacity: 0, y: 28 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: index * 0.05 } },
+      }}
+      className="card card-hover flex flex-col overflow-hidden"
+    >
+      {/* Gallery modal */}
       <AnimatePresence>
         {showGallery && hasPhotos && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4"
             onClick={() => setShowGallery(false)}
           >
             <button
               onClick={() => setShowGallery(false)}
-              className="absolute right-4 top-4 z-50 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+              className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
+              aria-label="Close gallery"
             >
               <X className="h-6 w-6" />
             </button>
-
             <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
-              {/* Main Image */}
               <motion.img
-                key={currentImageIndex}
-                src={projectPhotos[currentImageIndex]}
-                alt={`${project.title} - Photo ${currentImageIndex + 1}`}
-                className="max-h-[80vh] w-auto rounded-lg object-contain shadow-2xl"
-                initial={{ opacity: 0, scale: 0.9 }}
+                key={imgIndex}
+                src={photos[imgIndex]}
+                alt={`${project.title} — ${imgIndex + 1}`}
+                className="max-h-[82vh] w-auto rounded-xl object-contain"
+                initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.25 }}
               />
-
-              {/* Navigation Arrows */}
-              {projectPhotos.length > 1 && (
+              {photos.length > 1 && (
                 <>
                   <button
-                    onClick={previousImage}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                    onClick={() => setImgIndex((p) => (p - 1 + photos.length) % photos.length)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/20"
+                    aria-label="Previous"
                   >
                     <ChevronLeft className="h-6 w-6" />
                   </button>
                   <button
-                    onClick={nextImage}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                    onClick={() => setImgIndex((p) => (p + 1) % photos.length)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/20"
+                    aria-label="Next"
                   >
                     <ChevronRight className="h-6 w-6" />
                   </button>
                 </>
-              )}
-
-              {/* Image Counter */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-2 text-sm text-white backdrop-blur-sm">
-                {currentImageIndex + 1} / {projectPhotos.length}
-              </div>
-
-              {/* Thumbnail Strip */}
-              {projectPhotos.length > 1 && (
-                <div className="mt-4 flex justify-center gap-2 overflow-x-auto pb-2">
-                  {projectPhotos.map((photo: string, idx: number) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentImageIndex(idx)}
-                      className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
-                        idx === currentImageIndex
-                          ? "border-[#D5B977] scale-110"
-                          : "border-transparent opacity-50 hover:opacity-100"
-                      }`}
-                    >
-                      <img
-                        src={photo}
-                        alt={`Thumbnail ${idx + 1}`}
-                        className="h-full w-full object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
               )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <Card className="group relative h-full overflow-hidden border-2 border-transparent bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:border-[#D5B977] hover:shadow-2xl hover:shadow-[#D5B977]/20">
-        {/* Gradient border effect */}
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#D5B977] via-[#c2a562] to-[#b39559] opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ padding: '2px' }}>
-          <div className="h-full w-full rounded-lg bg-white dark:bg-gray-800" />
-        </div>
-
-        <div className="relative z-10 max-w-full overflow-hidden">
-          {/* Project Header Image */}
-          <div className="relative h-40 w-full overflow-hidden bg-gradient-to-br from-[#1a1a3e] via-[#2d2d5a] to-[#1a1a3e]">
-            {/* Project Image */}
-            {project.image && (
-              <img
-                src={project.image}
-                alt={project.title}
-                className="absolute inset-0 h-full w-full object-cover opacity-40 transition-all duration-500 group-hover:scale-110 group-hover:opacity-60"
-              />
-            )}
-            
-            {/* Badges */}
-            <div className="absolute left-4 top-4 z-20 flex gap-2">
-              {project.featured && (
-                <motion.div
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.2 }}
-                >
-                  <Badge className="flex items-center gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg">
-                    <Star className="h-3 w-3 fill-current" />
-                    Featured
-                  </Badge>
-                </motion.div>
-              )}
-            </div>
-
-            <div className="absolute right-4 top-4 z-20">
-              <Badge className="bg-[#D5B977] font-semibold text-[#1a1a3e]">
-                {project.category}
-              </Badge>
-            </div>
-
-            {/* Title with gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a3e] via-transparent to-transparent" />
-            <div className="absolute inset-0 flex items-center justify-center p-4">
-              <motion.h3
-                className="text-center text-xl font-bold text-white drop-shadow-2xl line-clamp-2"
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                {project.title}
-              </motion.h3>
-            </div>
-
-            {/* Animated gradient overlay on hover */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#D5B977]/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-          </div>
-
-          <CardHeader className="space-y-2 py-4">
-            <CardDescription className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-              {project.shortDescription}
-            </CardDescription>
-
-            {/* Project Meta Info */}
-            <div className="flex flex-wrap gap-2 text-xs text-gray-600 dark:text-gray-400">
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4 text-[#D5B977]" />
-                <span>{project.duration}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users className="h-4 w-4 text-[#D5B977]" />
-                <span>{project.teamSize}</span>
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            {/* Tech Stack */}
-            <div className="flex flex-wrap gap-2">
-              {project.techStack.slice(0, 4).map((tech: string, i: number) => (
-                <motion.div
-                  key={tech}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={inView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.3, delay: 0.4 + i * 0.05 }}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <Badge
-                    variant="secondary"
-                    className="cursor-pointer bg-[#1a1a3e] dark:bg-gray-700 text-white transition-all duration-300 hover:bg-[#D5B977] hover:text-[#1a1a3e] hover:shadow-lg"
-                  >
-                    {tech}
-                  </Badge>
-                </motion.div>
-              ))}
-              {project.techStack.length > 4 && (
-                <Badge variant="secondary" className="bg-gray-200 text-gray-700">
-                  +{project.techStack.length - 4}
-                </Badge>
-              )}
-            </div>
-
-            {/* Enhanced Accordion */}
-            <Accordion type="single" collapsible>
-              <AccordionItem value="details" className="border-gray-300 dark:border-gray-600">
-                <AccordionTrigger className="text-[#1a1a3e] dark:text-white hover:text-[#D5B977] hover:no-underline">
-                  <span className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4" />
-                    View Full Details
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-6 text-base">
-                    {/* Tabs */}
-                    <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700">
-                      {["overview", "metrics", "challenges", "outcomes"].map((tab) => (
-                        <button
-                          key={tab}
-                          onClick={() => setActiveTab(tab)}
-                          className={`relative px-3 py-2 text-xs sm:text-sm md:text-base font-semibold capitalize transition-colors ${
-                            activeTab === tab
-                              ? "text-[#D5B977]"
-                              : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-                          }`}
-                        >
-                          {tab}
-                          {activeTab === tab && (
-                            <motion.div
-                              className="absolute bottom-0 left-0 h-0.5 w-full bg-[#D5B977]"
-                              layoutId={`activeTab-${project.id}`}
-                              transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                            />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Tab Content */}
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={activeTab}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {activeTab === "overview" && (
-                          <div className="space-y-4 max-w-full">
-                            <p className="text-sm sm:text-base leading-relaxed text-gray-700 dark:text-gray-300">
-                              {project.fullDescription}
-                            </p>
-
-                            {project.techStack.length > 4 && (
-                              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                                <p className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                  All Technologies:
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                  {project.techStack.map((tech: string) => (
-                                    <Badge
-                                      key={tech}
-                                      variant="secondary"
-                                      className="bg-gray-100 text-gray-700"
-                                    >
-                                      {tech}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {activeTab === "metrics" && project.metrics && (
-                          <div className="grid grid-cols-3 gap-4">
-                            {project.metrics.map((metric: any, i: number) => (
-                              <MetricCard key={i} metric={metric} inView={inView} delay={i * 0.1} />
-                            ))}
-                          </div>
-                        )}
-
-                        {activeTab === "challenges" && project.challenges && (
-                          <ul className="space-y-3 max-w-full">
-                            {project.challenges.map((challenge: string, i: number) => (
-                              <motion.li
-                                key={i}
-                                className="flex gap-2 sm:gap-3"
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.4, delay: i * 0.1 }}
-                              >
-                                <Target className="mt-0.5 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-[#D5B977]" />
-                                <span className="text-sm sm:text-base leading-relaxed text-gray-700 dark:text-gray-300">{challenge}</span>
-                              </motion.li>
-                            ))}
-                          </ul>
-                        )}
-
-                        {activeTab === "outcomes" && project.outcomes && (
-                          <ul className="space-y-3 max-w-full">
-                            {project.outcomes.map((outcome: string, i: number) => (
-                              <motion.li
-                                key={i}
-                                className="flex gap-2 sm:gap-3"
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.4, delay: i * 0.1 }}
-                              >
-                                <Award className="mt-0.5 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-green-500" />
-                                <span className="text-sm sm:text-base leading-relaxed text-gray-700 dark:text-gray-300">{outcome}</span>
-                              </motion.li>
-                            ))}
-                          </ul>
-                        )}
-                      </motion.div>
-                    </AnimatePresence>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-wrap gap-3 border-t border-gray-200 dark:border-gray-700 pt-4">
-                      {project.github && (
-                        <motion.a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1a1a3e] px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#D5B977] hover:text-[#1a1a3e] hover:shadow-lg"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Github className="h-4 w-4" />
-                          View Code
-                        </motion.a>
-                      )}
-                      {project.demo ? (
-                        <motion.a
-                          href={project.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-[#D5B977] px-4 py-2 text-sm font-semibold text-[#D5B977] transition-all duration-300 hover:bg-[#D5B977] hover:text-white hover:shadow-lg"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          Live Demo
-                        </motion.a>
-                      ) : (
-                        <motion.button
-                          disabled
-                          className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-semibold text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          No Demo
-                        </motion.button>
-                      )}
-                      {hasPhotos && (
-                        <motion.button
-                          onClick={() => setShowGallery(true)}
-                          className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#D5B977] to-[#c2a562] px-4 py-2 text-sm font-semibold text-[#1a1a3e] transition-all duration-300 hover:shadow-lg"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <ImageIcon className="h-4 w-4" />
-                          Photos ({projectPhotos.length})
-                        </motion.button>
-                      )}
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        </div>
-      </Card>
-    </motion.div>
-  );
-}
-
-interface MetricCardProps {
-  metric: { label: string; value: number; suffix: string };
-  inView: boolean;
-  delay: number;
-}
-
-function MetricCard({ metric, inView, delay }: MetricCardProps) {
-  return (
-    <motion.div
-      className="rounded-lg bg-gradient-to-br from-[#1a1a3e] to-[#2d2d5a] p-4 text-center shadow-lg"
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={inView ? { opacity: 1, scale: 1 } : {}}
-      transition={{ duration: 0.5, delay }}
-      whileHover={{ scale: 1.05, y: -5 }}
-    >
-      <div className="mb-1 text-3xl font-bold text-[#D5B977]">
-        {inView && (
-          <CountUp
-            end={metric.value}
-            duration={2}
-            suffix={metric.suffix}
-            separator=","
+      {/* Cover */}
+      <div className="relative h-44 overflow-hidden border-b border-line bg-surface2">
+        {project.image ? (
+          <img
+            src={project.image}
+            alt={project.title}
+            className="absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-700 hover:scale-105"
+          />
+        ) : (
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, var(--c-gold-solid) 1px, transparent 1px)",
+              backgroundSize: "22px 22px",
+            }}
           />
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent" />
+
+        <div className="absolute left-4 top-4 flex gap-2">
+          <span className="chip !bg-base/80 !py-1 backdrop-blur-sm">{project.category}</span>
+          {project.featured && (
+            <span className="chip !border-gold/40 !bg-gold-solid/20 !py-1 text-gold">
+              <Star className="h-3 w-3 fill-current" />
+              Featured
+            </span>
+          )}
+        </div>
+
+        <h3 className="absolute inset-x-4 bottom-3 font-display text-xl leading-tight text-ink">
+          {project.title}
+        </h3>
       </div>
-      <div className="text-xs font-medium text-gray-300">{metric.label}</div>
+
+      {/* Body */}
+      <div className="flex flex-1 flex-col gap-4 p-6">
+        <p className="text-sm leading-relaxed text-muted">{project.shortDescription}</p>
+
+        <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted">
+          <span className="inline-flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5 text-gold" />
+            {project.duration}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Users className="h-3.5 w-3.5 text-gold" />
+            {project.teamSize}
+          </span>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {project.techStack.slice(0, 5).map((tech: string) => (
+            <span key={tech} className="chip">
+              {tech}
+            </span>
+          ))}
+          {project.techStack.length > 5 && (
+            <span className="chip">+{project.techStack.length - 5}</span>
+          )}
+        </div>
+
+        <div className="mt-auto">
+          <Accordion type="single" collapsible>
+            <AccordionItem value="details" className="border-line">
+              <AccordionTrigger className="text-sm font-medium text-ink hover:text-gold hover:no-underline">
+                <span className="flex items-center gap-2">
+                  <ArrowUpRight className="h-4 w-4" />
+                  Full details
+                </span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-5 pt-2">
+                  <div className="flex flex-wrap gap-1">
+                    {tabs.map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`relative rounded-full px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
+                          activeTab === tab
+                            ? "bg-gold-solid/15 text-gold"
+                            : "text-muted hover:text-ink"
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
+
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeTab}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      {activeTab === "overview" && (
+                        <div className="space-y-4">
+                          <p className="text-sm leading-relaxed text-muted">
+                            {project.fullDescription}
+                          </p>
+                          {project.techStack.length > 5 && (
+                            <div className="flex flex-wrap gap-2 border-t border-line pt-4">
+                              {project.techStack.map((tech: string) => (
+                                <span key={tech} className="chip">
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {activeTab === "metrics" && project.metrics && (
+                        <div className="grid grid-cols-3 gap-3">
+                          {project.metrics.map((m: any, i: number) => (
+                            <div
+                              key={i}
+                              className="rounded-xl border border-line bg-base p-4 text-center"
+                            >
+                              <div className="font-display text-3xl text-gold">
+                                {inView && (
+                                  <CountUp end={m.value} duration={1.6} suffix={m.suffix} />
+                                )}
+                              </div>
+                              <div className="mt-1 text-[11px] leading-tight text-muted">
+                                {m.label}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {activeTab === "challenges" && project.challenges && (
+                        <ul className="space-y-3">
+                          {project.challenges.map((c: string, i: number) => (
+                            <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-muted">
+                              <Target className="mt-0.5 h-4 w-4 flex-shrink-0 text-gold" />
+                              <span>{c}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
+                      {activeTab === "outcomes" && project.outcomes && (
+                        <ul className="space-y-3">
+                          {project.outcomes.map((o: string, i: number) => (
+                            <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-muted">
+                              <Award className="mt-0.5 h-4 w-4 flex-shrink-0 text-gold" />
+                              <span>{o}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+
+                  <div className="flex flex-wrap gap-2 border-t border-line pt-4">
+                    {project.github && (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline flex-1 !py-2 text-sm"
+                      >
+                        <Github className="h-4 w-4" />
+                        Code
+                      </a>
+                    )}
+                    {project.demo && (
+                      <a
+                        href={project.demo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-solid flex-1 !py-2 text-sm"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Demo
+                      </a>
+                    )}
+                    {hasPhotos && (
+                      <button
+                        onClick={() => setShowGallery(true)}
+                        className="btn btn-outline flex-1 !py-2 text-sm"
+                      >
+                        <ImageIcon className="h-4 w-4" />
+                        Photos ({photos.length})
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </div>
     </motion.div>
   );
 }

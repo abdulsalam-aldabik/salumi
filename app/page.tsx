@@ -8,6 +8,7 @@ import { Skills } from "@/components/Skills";
 import { Education } from "@/components/Education";
 import { Contact } from "@/components/Contact";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { AskPortfolio } from "@/components/assistant/AskPortfolio";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <Skills />
       <Education />
       <Contact />
+      <AskPortfolio />
     </main>
   );
 }

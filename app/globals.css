@@ -9,33 +9,36 @@
    ============================================================ */
 
 :root {
-  /* Light mode — warm cream paper */
-  --c-base: #f6f1e7;
-  --c-surface: #fffdf8;
-  --c-surface-2: #efe7d7;
-  --c-ink: #221d15;
-  --c-muted: #6e6555;
-  --c-line: #e3dac9;
-  --c-gold: #9a7621;        /* gold tuned for text contrast on cream */
-  --c-gold-solid: #d5b977;  /* brand gold for fills */
-  --c-on-gold: #221d15;     /* text on a gold fill */
-  --c-grain: 0.025;
+  /* Light mode — cool neutral grey with a single deep bronze accent.
+     Kept deliberately desaturated so nothing reads warm/pink. */
+  --c-base: #eceeF0;
+  --c-surface: #f8f9fa;
+  --c-surface-2: #dfe3e5;
+  --c-ink: #12171b;
+  --c-muted: #4f5961;
+  --c-line: #d5d9dc;
+  --c-gold: #6f5616;        /* deep bronze for text/links/icons */
+  --c-gold-solid: #6f5616;  /* dark bronze fills (buttons), no peach */
+  --c-on-gold: #f8f9fa;     /* light text on the bronze fill */
+  --c-glow: color-mix(in srgb, #12171b 4%, transparent); /* neutral, no warm wash */
+  --c-grain: 0.015;
 
   color-scheme: light;
 }
 
 .dark {
-  /* Dark mode — warm espresso */
-  --c-base: #16130e;
-  --c-surface: #1f1b14;
-  --c-surface-2: #272117;
-  --c-ink: #f2ebdd;
-  --c-muted: #a99d87;
-  --c-line: #332c20;
-  --c-gold: #d5b977;
-  --c-gold-solid: #d5b977;
-  --c-on-gold: #16130e;
-  --c-grain: 0.04;
+  /* Dark mode — deep slate with a warm amber accent */
+  --c-base: #0f1417;
+  --c-surface: #161d21;
+  --c-surface-2: #1e262b;
+  --c-ink: #eaf0f2;
+  --c-muted: #a6b2ba;
+  --c-line: #28323a;
+  --c-gold: #f2b45e;
+  --c-gold-solid: #f2b45e;
+  --c-on-gold: #0f1417;
+  --c-glow: color-mix(in srgb, #f2b45e 22%, transparent); /* warm amber halo */
+  --c-grain: 0.05;
 
   color-scheme: dark;
 }
@@ -83,7 +86,7 @@ body {
 
 ::selection {
   background: var(--c-gold-solid);
-  color: #16130e;
+  color: #0f1417;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -271,7 +274,7 @@ body {
 .glow-warm {
   background: radial-gradient(
     60% 50% at 50% 0%,
-    color-mix(in srgb, var(--c-gold-solid) 22%, transparent),
+    var(--c-glow),
     transparent 70%
   );
 }

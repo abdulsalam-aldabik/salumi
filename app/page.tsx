@@ -11,18 +11,15 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-base">
       <Navigation />
       <ScrollToTop />
-      {/* Smooth scroll container */}
-      <div className="scroll-smooth">
-        <Hero />
-        <About />
-        <Projects />
-        <Skills />
-        <Education />
-        <Contact />
-      </div>
+      <Hero />
+      <About />
+      <Projects />
+      <Skills />
+      <Education />
+      <Contact />
     </main>
   );
 }

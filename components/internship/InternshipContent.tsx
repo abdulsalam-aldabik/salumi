@@ -46,7 +46,7 @@ const steps = [
   {
     icon: Boxes,
     title: "Show the answer",
-    text: "The solution is drawn back over the live board in 3D, lined up with the real pieces so it's easy to follow.",
+    text: "The solution is rendered on the digital board in 3D, in a clean top-down view that's easy to follow.",
   },
 ];
 
@@ -70,14 +70,15 @@ const features = [
 
 const techStack = [
   "Computer Vision",
-  "YOLO (object detection)",
+  "YOLO segmentation",
   "Blender (synthetic training images)",
+  "Roboflow (real-data annotation)",
   "Python",
   "PyTorch / Ultralytics",
   "React",
   "TypeScript",
   "Three.js (3D)",
-  "ONNX Runtime (in-browser AI)",
+  "ONNX Runtime Web (on-device)",
   "Vite",
 ];
 
@@ -131,7 +132,7 @@ export function InternshipContent() {
             transition={{ duration: 0.7, ease, delay: 0.32 }}
           >
             <Meta icon={Building2} label="Company" value="Smart NV" />
-            <Meta icon={CalendarDays} label="When" value="Feb to May 2026" />
+            <Meta icon={CalendarDays} label="When" value="23 Feb – 22 May 2026" />
             <Meta icon={MapPin} label="Where" value="Kontich, Belgium" />
           </motion.div>
         </div>
@@ -179,7 +180,7 @@ export function InternshipContent() {
               <SummaryRow k="Assignment" v="Computer-vision puzzle assistant" />
               <SummaryRow k="My role" v="CV model training & web app development" />
               <SummaryRow k="Company" v="Smart NV, Kontich (BE)" />
-              <SummaryRow k="Duration" v="Feb to May 2026 (3 months)" />
+              <SummaryRow k="Duration" v="23 Feb – 22 May 2026" />
             </div>
           </motion.div>
         </div>
@@ -200,16 +201,18 @@ export function InternshipContent() {
             className="space-y-5 text-lg leading-relaxed text-muted"
           >
             <p>
-              IQ Puzzler is a single-player game: a grid board and a set of
-              brightly coloured pieces that have to interlock so the board is
-              filled exactly. The pieces share similar shapes and colours, and
-              the number of possible arrangements is large, so players get stuck
-              or place a piece one cell off without noticing.
+              IQ Noodles is a single-player game by SmartGames: a board of
+              twenty-one metal pins and eleven uniquely shaped, colour-coded
+              &ldquo;noodle&rdquo; pieces that thread around the pins instead of
+              filling a grid. The pieces look similar and there are countless
+              ways to route them, so players get stuck or place one slightly
+              wrong without noticing.
             </p>
             <p>
               Smart NV wanted to find out whether a phone could handle the hard
               part: read the board, work out its current state, and guide the
-              player from there. My job covered the whole pipeline, from{" "}
+              player from there. It was a team project across three SmartGames
+              titles, and I owned IQ Noodles end to end, from{" "}
               <span className="text-ink">
                 training the model that detects the pieces
               </span>{" "}
@@ -344,10 +347,10 @@ export function InternshipContent() {
             transition={{ ...reveal.transition, delay: 0.1 }}
             className="card divide-y divide-line self-start"
           >
-            <Fact big="1,000s" small="Synthetic images rendered and auto-labelled in 3D" />
-            <Fact big="2 stages" small="Synthetic pre-training, then fine-tuning on real photos" />
+            <Fact big="0.94" small="Mask mAP@0.5 on real phone photos (synthetic-to-real model)" />
+            <Fact big="800×" small="Faster solving after the right search heuristic (24s to 30ms)" />
             <Fact big="On-device" small="Inference in the browser, no server required" />
-            <Fact big="3 months" small="From first experiment to a working, testable build" />
+            <Fact big="2 phases" small="Synthetic pre-training, then fine-tuning on real photos" />
           </motion.div>
         </div>
       </section>
@@ -402,23 +405,29 @@ export function InternshipContent() {
                   IQ Square <span className="italic text-gold">Deluxe</span>
                 </h2>
                 <p className="leading-relaxed text-muted">
-                  I finished the main app ahead of schedule, so I used the extra
-                  time to rebuild it properly.
+                  With IQ Noodles done ahead of schedule, I took on a second
+                  SmartGames puzzle and built it on a cleaner architecture.
                 </p>
               </div>
               <div className="space-y-5 p-8 text-muted md:p-10">
                 <p className="leading-relaxed">
-                  The first version proved the idea worked. For the rebuild I
-                  split it into separate packages with clear boundaries: the{" "}
+                  IQ Square is a different puzzle: a grid of interlocking{" "}
+                  <span className="text-ink">block pieces</span> rather than
+                  noodles around pins. I reused the same{" "}
+                  <span className="text-ink">vision pipeline</span> (YOLO
+                  segmentation, board localization and colour classification)
+                  and rebuilt everything as a proper monorepo, splitting it into
+                  separate packages: the{" "}
                   <span className="text-ink">puzzle logic</span>, the{" "}
-                  <span className="text-ink">vision</span> that detects pieces,
-                  and the <span className="text-ink">interface</span>. Each one
-                  builds and tests on its own.
+                  <span className="text-ink">vision</span>, the shared{" "}
+                  <span className="text-ink">types</span> and the{" "}
+                  <span className="text-ink">interface</span>, each building and
+                  testing on its own.
                 </p>
                 <p className="leading-relaxed">
-                  That structure makes the app much easier to maintain, test and
-                  extend, which is the difference between a quick prototype and
-                  something a team can keep building on.
+                  It showed the vision approach generalises beyond one game, and
+                  left a structure a team could keep building on rather than a
+                  one-off prototype.
                 </p>
               </div>
             </div>
@@ -509,7 +518,7 @@ export function InternshipContent() {
           </motion.div>
 
           <p className="mt-12 text-center font-mono text-xs text-muted">
-            Internship at Smart NV · Neerveld 14, 2550 Kontich · 23 Feb to 22 May 2026
+            Internship at Smart NV · Neerveld 14, 2550 Kontich · 23 Feb – 22 May 2026
           </p>
         </div>
       </section>

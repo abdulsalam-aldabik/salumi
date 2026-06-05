@@ -279,7 +279,7 @@ export const personalInfo = {
   location: "Av. d'Auderghem 275, 1040 Etterbeek, Belgium",
   university: "Thomas More",
   program: "Applied Computer Science - AI Specialization",
-  email: "r0918747@student.thomasmore.be",
+  email: "abdulsalam123451@gmail.com",
   phone: "0032465726743",
   github: "https://github.com/abdulsalam-aldabik",
   linkedin: "https://www.linkedin.com/in/abdulsalamaldabik/"

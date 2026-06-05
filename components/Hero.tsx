@@ -32,7 +32,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease }}
           >
-AI &amp; Computer-Vision Engineer · Belgium
+AI &amp; Computer-Vision Developer · Belgium
           </motion.p>
 
           <h1 className="display text-[clamp(3rem,9vw,7rem)] text-ink">

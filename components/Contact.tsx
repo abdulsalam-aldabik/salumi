@@ -116,8 +116,7 @@ export function Contact() {
             {/* Info */}
             <motion.div {...reveal} className="space-y-8">
               <p className="max-w-md text-lg leading-relaxed text-muted">
-                I&apos;m open to AI/ML engineering roles, full-stack work, and
-                internships. Have an idea or an opportunity? Reach out.
+                I&apos;m open to AI/ML  roles, full-stack work. Have an idea or an opportunity? Reach out.
               </p>
 
               <div className="space-y-4">

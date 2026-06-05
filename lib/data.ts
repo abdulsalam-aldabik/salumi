@@ -9,7 +9,7 @@ export const projects = [
     github: "https://github.com/abdulsalam-aldabik/jarvis-ai",
     featured: true,
     duration: "October 2024 - Ongoing (Early Development Phase)",
-    teamSize: "Solo (Technical Architect, Lead Engineer, Platform & Security Architect)",
+    teamSize: "Solo (Technical Architect, Platform & Security Architect)",
     metrics: [
       { label: "Design Iterations", value: 10, suffix: "+" },
       { label: "Planned Agents", value: 7, suffix: "+" },
@@ -276,11 +276,11 @@ export const personalInfo = {
   title: "Applied Computer Science Student - AI Specialization",
   tagline: "I build AI and IoT systems that run locally and respect privacy",
   bio: "I'm an Applied Computer Science student specializing in AI at Thomas More. I like building real systems, from computer-vision models to self-hosted infrastructure, and I work well in teams, usually as the person mapping the architecture and keeping things moving.",
-  location: "Av. d'Auderghem 275, 1040 Etterbeek, Belgium",
+  location: "Etterbeek, Belgium",
   university: "Thomas More",
   program: "Applied Computer Science - AI Specialization",
   email: "abdulsalam123451@gmail.com",
-  phone: "0032465726743",
+  phone: "+32465726743",
   github: "https://github.com/abdulsalam-aldabik",
   linkedin: "https://www.linkedin.com/in/abdulsalamaldabik/"
 };

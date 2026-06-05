@@ -304,10 +304,6 @@ export function InternshipContent() {
               caption="Placements checked"
             />
           </motion.div>
-          <p className="mt-4 font-mono text-[11px] text-muted/70">
-            Screenshots load automatically once added to{" "}
-            <span className="text-muted">/public/internship/</span>.
-          </p>
         </div>
       </section>
 

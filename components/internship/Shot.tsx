@@ -1,14 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImageIcon } from "lucide-react";
 
-/**
- * Displays a screenshot from /public/internship/.
- * The image is layered over a placeholder and only fades in once it has
- * actually loaded — so a missing file simply leaves the tidy placeholder
- * visible (no broken-image icon). Drop a file at `public{src}` to fill it.
- */
+
 export function Shot({
   src,
   alt,
@@ -21,11 +16,20 @@ export function Shot({
   aspect?: string;
 }) {
   const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
+  // If the image was already in the browser cache it may load before React
+  // attaches the onLoad handler, so the event never fires. Checking
+  // img.complete after mount catches that case.
+  useEffect(() => {
+    if (imgRef.current?.complete) {
+      setLoaded(true);
+    }
+  }, [src]);
   return (
     <figure className="card overflow-hidden">
       <div className={`relative ${aspect} bg-surface2`}>
-        {/* Placeholder (always rendered underneath) */}
+        {/* Placeholder shown until the real image loads */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-5 text-center">
           <span className="flex h-12 w-12 items-center justify-center rounded-full border border-line text-gold">
             <ImageIcon className="h-6 w-6" />
@@ -38,7 +42,7 @@ export function Shot({
         {/* Real image — fades in only when it successfully loads */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={src}
+          ref={imgRef}
           alt={alt}
           onLoad={() => setLoaded(true)}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${

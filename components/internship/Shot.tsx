@@ -43,6 +43,7 @@ export function Shot({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           ref={imgRef}
+          src={src}
           alt={alt}
           onLoad={() => setLoaded(true)}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${

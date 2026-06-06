@@ -540,7 +540,7 @@ function Meta({
         <span className="block font-mono text-[10px] uppercase tracking-wider text-muted">
           {label}
         </span>
-        <span className="block truncate text-ink">{value}</span>
+        <span className="block text-sm leading-tight text-ink">{value}</span>
       </span>
     </div>
   );

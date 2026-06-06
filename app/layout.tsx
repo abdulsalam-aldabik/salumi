@@ -20,10 +20,10 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Abdul Salam Aldabik | AI & Computer-Vision Engineer",
+  title: "Abdul Salam Aldabik | AI & Computer-Vision Developer",
   description: "Applied Computer Science student specializing in AI, Machine Learning, Computer Vision, and Full-Stack Development. Explore projects in autonomous driving, smart home automation, and multi-agent AI systems.",
   keywords: [
-    "AI Engineer",
+    "AI Developer",
     "Machine Learning",
     "Computer Vision",
     "Full Stack Developer",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://salumieportfolio.netlify.app",
-    title: "Abdul Salam Aldabik - AI Engineer & Developer Portfolio",
+    title: "Abdul Salam Aldabik - AI & Software Developer Portfolio",
     description: "Explore AI/ML projects, web development work, and technical skills. Specializing in Computer Vision, Deep Learning, and Full-Stack Development.",
     siteName: "Abdul Salam Aldabik Portfolio",
     images: [
@@ -56,13 +56,13 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Abdul Salam Aldabik - AI Engineer Portfolio",
+        alt: "Abdul Salam Aldabik - AI Developer Portfolio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Abdul Salam Aldabik | AI Engineer & Developer",
+    title: "Abdul Salam Aldabik | AI & Software Developer",
     description: "Applied CS student specializing in AI/ML. Building intelligent systems with Computer Vision & Deep Learning.",
     creator: "@yourusername",
     images: ["/twitter-image.jpg"],

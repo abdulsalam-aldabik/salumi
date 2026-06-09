@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { personalInfo } from "@/lib/data";
+import { useState, useRef, useEffect } from "react";
+import { personalInfo, skills } from "@/lib/data";
 import { useCountUp } from "@/lib/hooks";
 import { MapPin, GraduationCap, Download, Github, Linkedin, Mail } from "lucide-react";
 
@@ -18,14 +18,14 @@ export function About() {
     <section id="about" className="section bg-base">
       <div className="shell">
         <motion.div {...reveal} className="mb-14">
-          <p className="eyebrow mb-4">01 — About</p>
+          <p className="eyebrow mb-4">01 — About me</p>
           <h2 className="display max-w-3xl text-[clamp(2rem,5vw,3.5rem)] text-ink">
             Driven to build technology that{" "}
             <span className="italic text-gold">earns trust</span>.
           </h2>
         </motion.div>
 
-        <div className="grid gap-12 lg:grid-cols-[0.85fr_1.4fr] lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[0.6fr_1.6fr] lg:gap-16">
           {/* Profile card */}
           <motion.div {...reveal} className="space-y-5 self-start">
             <ProfilePhoto />
@@ -84,6 +84,25 @@ export function About() {
                 the architecture and keeping people moving. I treat each build
                 as a problem to get right, one decision at a time.
               </p>
+              <p>
+                After graduating I&apos;m looking for a stable software-development
+                role where I can keep growing, ideally working with machine
+                learning. Alongside a full-time job I&apos;ll keep building
+                JARVIS-2, my long-term personal project, which is where I push
+                myself the furthest and learn the most.
+              </p>
+            </div>
+
+            {/* Soft skills */}
+            <div className="mt-8">
+              <p className="eyebrow !text-muted mb-3">Soft skills</p>
+              <div className="flex flex-wrap gap-2">
+                {skills.soft.map((s) => (
+                  <span key={s} className="chip">
+                    {s}
+                  </span>
+                ))}
+              </div>
             </div>
 
             <div className="card mt-8 grid grid-cols-2 divide-line sm:grid-cols-4 sm:divide-x">
@@ -101,6 +120,17 @@ export function About() {
 
 function ProfilePhoto() {
   const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // If the image is already cached it can finish loading before React attaches
+  // onLoad, so the event never fires. Checking img.complete after mount catches
+  // that case.
+  useEffect(() => {
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+      setLoaded(true);
+    }
+  }, []);
+
   return (
     <div className="card relative aspect-[4/5] overflow-hidden">
       {/* Monogram placeholder */}
@@ -110,6 +140,7 @@ function ProfilePhoto() {
       {/* Real photo fades in if /profile.jpg is added */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        ref={imgRef}
         src="/profile.jpg"
         alt={personalInfo.name}
         onLoad={() => setLoaded(true)}

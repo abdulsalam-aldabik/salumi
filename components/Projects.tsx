@@ -23,6 +23,7 @@ import {
   ChevronRight,
   ArrowUpRight,
   Sparkles,
+  GraduationCap,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import CountUp from "react-countup";
@@ -60,11 +61,14 @@ export function Projects() {
     return filtered;
   }, [selectedCategory, searchQuery]);
 
+  const isMain = (p: { main?: boolean }) => Boolean(p.main);
+  const mainCount = useMemo(() => projects.filter(isMain).length, []);
+
   const displayedProjects = useMemo(() => {
     if (showAll || searchQuery.trim() || selectedCategory !== "All") {
       return filteredProjects;
     }
-    return filteredProjects.slice(0, 4);
+    return filteredProjects.filter(isMain);
   }, [filteredProjects, showAll, searchQuery, selectedCategory]);
 
   const isCurated =
@@ -158,11 +162,14 @@ IQ Noodles: teaching a phone to solve a puzzle
         </AnimatePresence>
 
         {/* Show more / less */}
-        {isCurated && filteredProjects.length > 4 && (
-          <div className="mt-12 flex justify-center">
+        {isCurated && filteredProjects.length > mainCount && (
+          <div className="mt-12 flex flex-col items-center gap-2">
             <button onClick={() => setShowAll(true)} className="btn btn-outline">
-              Show all {projects.length} projects
+              More projects ({projects.length - mainCount})
             </button>
+            <span className="font-mono text-[11px] text-muted">
+              showing {mainCount} featured of {projects.length}
+            </span>
           </div>
         )}
         {showAll && selectedCategory === "All" && !searchQuery.trim() && (
@@ -310,13 +317,19 @@ function ProjectCard({ project, index }: { project: any; index: number }) {
         <p className="text-sm leading-relaxed text-muted">{project.shortDescription}</p>
 
         <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted">
-          <span className="inline-flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5 text-gold" />
-            {project.duration}
-          </span>
+          {project.context && (
+            <span className="inline-flex items-center gap-1.5">
+              <GraduationCap className="h-3.5 w-3.5 text-gold" />
+              {project.context}
+            </span>
+          )}
           <span className="inline-flex items-center gap-1.5">
             <Users className="h-3.5 w-3.5 text-gold" />
             {project.teamSize}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5 text-gold" />
+            {project.duration}
           </span>
         </div>
 
@@ -367,10 +380,26 @@ function ProjectCard({ project, index }: { project: any; index: number }) {
                       transition={{ duration: 0.25 }}
                     >
                       {activeTab === "overview" && (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                           <p className="text-sm leading-relaxed text-muted">
                             {project.fullDescription}
                           </p>
+                          {project.contribution && (
+                            <p className="text-sm leading-relaxed text-muted">
+                              <span className="font-semibold text-ink">
+                                My contribution.{" "}
+                              </span>
+                              {project.contribution}
+                            </p>
+                          )}
+                          {project.learned && (
+                            <p className="text-sm leading-relaxed text-muted">
+                              <span className="font-semibold text-ink">
+                                What I learned.{" "}
+                              </span>
+                              {project.learned}
+                            </p>
+                          )}
                           {project.techStack.length > 5 && (
                             <div className="flex flex-wrap gap-2 border-t border-line pt-4">
                               {project.techStack.map((tech: string) => (

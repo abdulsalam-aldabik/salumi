@@ -2,9 +2,10 @@
 
 import { motion } from "framer-motion";
 import { skills } from "@/lib/data";
-import { Brain, Code, Globe, Server, Cpu, Shield, Database, Film } from "lucide-react";
+import { Brain, Code, Globe, Server, Cpu, Shield, Database, Film, Users } from "lucide-react";
 
 const skillCategories = [
+  { id: "soft", title: "Soft Skills", icon: Users, skills: skills.soft },
   { id: "aiml", title: "AI & Machine Learning", icon: Brain, skills: skills.aiml },
   { id: "programming", title: "Programming Languages", icon: Code, skills: skills.programming },
   { id: "webDev", title: "Web Development", icon: Globe, skills: skills.webDev },

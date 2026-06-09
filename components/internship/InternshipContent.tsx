@@ -194,6 +194,13 @@ export function InternshipContent() {
             <h2 className="display text-[clamp(1.9rem,4vw,3rem)] text-ink">
               A simple-looking puzzle with a huge number of arrangements.
             </h2>
+            <div className="mt-8 max-w-xs">
+              <Shot
+                src="/internship/puzzle.jpg"
+                alt="The IQ Noodles puzzle board"
+                caption="The IQ Noodles puzzle: 21 pins and 11 colour-coded pieces"
+              />
+            </div>
           </motion.div>
           <motion.div
             {...reveal}
@@ -261,6 +268,35 @@ export function InternshipContent() {
               );
             })}
           </div>
+
+          {/* Under-the-hood pipeline strip */}
+          <motion.div {...reveal} className="mt-10">
+            <p className="eyebrow !text-muted mb-4">
+              Under the hood — the same scan through the vision pipeline
+            </p>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {[
+                { src: "/internship/detect.jpg", caption: "Pieces detected (YOLO)" },
+                { src: "/internship/board.jpg", caption: "Board straightened to a grid" },
+                { src: "/internship/classify.jpg", caption: "Identified by colour" },
+                { src: "/internship/mapped.jpg", caption: "Mapped, 92% avg confidence" },
+              ].map((p) => (
+                <figure key={p.src} className="card overflow-hidden">
+                  <div className="relative aspect-square bg-surface2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={p.src}
+                      alt={p.caption}
+                      className="absolute inset-0 h-full w-full object-contain"
+                    />
+                  </div>
+                  <figcaption className="border-t border-line px-3 py-2 text-[11px] leading-snug text-muted">
+                    {p.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -274,7 +310,7 @@ export function InternshipContent() {
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-muted">
               A few moments from the working app, from pointing the camera at the
-              board to the solved layout rendered back over it.
+              board to the solved layout on the pin grid.
             </p>
           </motion.div>
 
@@ -286,22 +322,22 @@ export function InternshipContent() {
             <Shot
               src="/internship/scan.jpg"
               alt="Pointing the camera at the board"
-              caption="Point & capture"
+              caption="Point the camera at the board"
             />
             <Shot
               src="/internship/detected.jpg"
-              alt="Pieces recognised"
-              caption="Pieces recognised"
+              alt="Pieces detected"
+              caption="Pieces detected"
             />
             <Shot
               src="/internship/solution.jpg"
-              alt="Solution shown in 3D"
-              caption="Solution in 3D"
+              alt="Solved on the pin grid"
+              caption="Solved on the pin grid"
             />
             <Shot
               src="/internship/validate.jpg"
-              alt="Checking the placements"
-              caption="Placements checked"
+              alt="Hint and validation"
+              caption="Hint &amp; validation"
             />
           </motion.div>
         </div>
@@ -336,6 +372,14 @@ export function InternshipContent() {
               , using ONNX Runtime Web. No server does the work, so it stays fast
               and private to the user.
             </p>
+            <div className="max-w-sm pt-2">
+              <Shot
+                src="/internship/synthetic.jpg"
+                alt="A synthetic training render (Blender)"
+                caption="One of thousands of synthetic training images, rendered in Blender"
+                aspect="aspect-square"
+              />
+            </div>
           </motion.div>
 
           <motion.div
